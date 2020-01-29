@@ -23,7 +23,3 @@ export type Model<T> = {
 export interface Models {
   [modelName: string]: Model<any>;
 }
-/**
- * mutations: 同步修改state，要接受的只是一个state和传入的数据对象。
- * actions: 一个纯函数，用于触发mutations修改数据，自身不支持修改。
- */

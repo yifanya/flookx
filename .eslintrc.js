@@ -24,7 +24,7 @@ module.exports = {
       "mjs": "never"
     }],
     "no-console": "off",
-    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/*.test.js", "**/*.spec.js", "**/*.spec.ts", "**/*.test.ts"]}]
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/*.test.js", "**/*.spec.js", "**/*.spec.ts", "**/*.test.ts", "**/*.config.js"]}]
   },
   env: {
     browser: true,

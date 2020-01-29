@@ -1,6 +1,6 @@
 {
   "name": "flookx",
-  "version": "1.1",
+  "version": "1.0.0",
   "description": "A state manager for React Hooks",
   "keywords": [
     "react",
@@ -17,8 +17,8 @@
   "author": "yifanya <yifanaaa@yeah.net> (https://github.com/yifanya)",
   "homepage": "https://github.com/yifanya/flookx",
   "repository": "github:yifanya/flookx",
-  "main": "dist/flooks.cjs.js",
-  "module": "dist/flooks.esm.js",
+  "main": "dist/flookx.cjs.js",
+  "module": "dist/flookx.esm.js",
   "types": "dist/types.d.ts",
   "files": [
     "dist",
@@ -34,7 +34,10 @@
     "react-dom": ">=16.8.0"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.3"
+    "@babel/runtime": "^7.6.3",
+    "rollup-plugin-sourcemaps": "^0.5.0",
+    "rollup-plugin-typescript": "^1.0.1",
+    "tslib": "^1.10.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
