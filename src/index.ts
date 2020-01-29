@@ -8,7 +8,7 @@ const models: Models = {};
 type getActions<T> = (
   model: (modelName: string) => Pick<Model<T>, 'state' | 'actions' | 'mutations'>,
 ) => Actions;
-type getMutations<S> = (getState: () => State<S>) => Mutations<S>;
+type getMutations<S> = (s: State<S>) => Mutations<S>;
 
 interface Store<S> {
   state: State<S>;
@@ -59,13 +59,11 @@ export function setModel<T>(name: string, store: Store<T>): void {
     });
     return result;
   };
-  const getState = (): State<T> => {
-    return { ...models[name].state } as State<T>;
-  };
   const rawActions = getActions(getModel);
-  const rawMutations = getMutations(getState);
   const actions: any = {};
   const mutations: any = {};
+  models[name] = { state: initialState, actions, setters: [], mutations };
+  const rawMutations = getMutations(models[name].state);
   Object.entries(rawActions).forEach(([actionName, rawAction]) => {
     actions[actionName] = (...args: any[]) => {
       const res = rawAction(...args);
@@ -79,21 +77,9 @@ export function setModel<T>(name: string, store: Store<T>): void {
   });
   Object.entries(rawMutations).forEach(([mutationName, rawMutation]) => {
     mutations[mutationName] = (...args: any[]) => {
-      const res = rawMutation(...args);
-      if (process.env.NODE_ENV !== 'production') {
-        if (typeof res === 'undefined') {
-          throw new Error('mutation need return state');
-        }
-        const stateKeys = Object.keys(models[name].state);
-        Object.keys(res).forEach((key) => {
-          if (stateKeys.indexOf(key) === -1) {
-            console.warn(`key:${key} need init`);
-          }
-        });
-      }
-      models[name].state = res;
+      rawMutation(...args);
       models[name].setters.forEach((setter) => {
-        setter(res);
+        setter({});
       });
     };
   });
