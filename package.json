@@ -14,7 +14,7 @@
     "flooks"
   ],
   "license": "MIT",
-  "author": "nanxiaobei <yifanaaa@yeah.net> (https://github.com/yifanya)",
+  "author": "yifanya <yifanaaa@yeah.net> (https://github.com/yifanya)",
   "homepage": "https://github.com/yifanya/flookx",
   "repository": "github:yifanya/flookx",
   "main": "dist/flooks.cjs.js",
