@@ -1,25 +1,27 @@
 import { useState, useEffect } from 'react';
-import { State, Actions, Models, Model, Mutations } from './types';
+import { Store, Actions, Model, Mutations, State } from './types';
 import Utils from './utils';
+
+/**
+ * @types
+ */
+interface Models {
+  [modelName: string]: Model;
+}
+interface GetActions {
+  (model: (name?: string) => any): Actions;
+}
+interface GetMutations {
+  (state: State): Mutations;
+}
 
 const { notString, notObject, notFunction, isObject, modelNotExist } = Utils;
 const models: Models = {};
 
-type getActions<T> = (
-  model: (modelName: string) => Pick<Model<T>, 'state' | 'actions' | 'mutations'>,
-) => Actions;
-type getMutations<S> = (s: State<S>) => Mutations<S>;
-
-interface Store<S> {
-  state: State<S>;
-  actions: getActions<S>;
-  mutations: getMutations<S>;
-}
-
-export function setModel<T>(name: string, store: Store<T>): void {
-  let initialState: State<T>;
-  let getActions: getActions<T>;
-  let getMutations: getMutations<T>;
+export function setModel(name: string, store: Store): void {
+  let initialState: State;
+  let getActions: GetActions;
+  let getMutations: GetMutations;
 
   if (process.env.NODE_ENV !== 'production') {
     if (typeof name !== 'string') {
@@ -28,7 +30,6 @@ export function setModel<T>(name: string, store: Store<T>): void {
     if (name in models) {
       throw new Error('store name already exists');
     }
-
     if (!isObject(store)) {
       throw new Error(notObject('store'));
     }
@@ -47,12 +48,13 @@ export function setModel<T>(name: string, store: Store<T>): void {
     ({ state: initialState, actions: getActions, mutations: getMutations } = store);
   }
 
-  const getModel = (modelName = name): Model<T> => {
+  const getModel = (modelName = name): Model => {
     const result: any = {};
-    Object.keys(models[modelName] as Model<T>).forEach((key) => {
-      result[key] = new Proxy(models[modelName][key as keyof Model<any>], {
+    Object.keys(models[modelName] as Model).forEach((key) => {
+      result[key] = new Proxy(models[modelName][key as keyof Model], {
         set(target, propKey, value, receiver): boolean {
           console.warn(`in action, you can't change value key:${propKey as any}`);
+          console.log(propKey);
           return Reflect.set(target, propKey, value, receiver);
         },
       });
@@ -78,15 +80,14 @@ export function setModel<T>(name: string, store: Store<T>): void {
   Object.entries(rawMutations).forEach(([mutationName, rawMutation]) => {
     mutations[mutationName] = (...args: any[]) => {
       rawMutation(...args);
-      models[name].setters.forEach((setter) => {
+      models[name].setters.forEach((setter: any) => {
         setter({});
       });
     };
   });
-  models[name] = { state: initialState, actions, setters: [], mutations };
 }
 
-export const useModel = (name: string) => {
+export const useModel = <T extends {}, U extends {}, V extends {}>(name: string) => {
   if (process.env.NODE_ENV !== 'production') {
     if (typeof name !== 'string') {
       throw new Error(notString('name'));
@@ -105,7 +106,7 @@ export const useModel = (name: string) => {
       setters.splice(index, 1);
     };
   }, [setters]);
-  return { ...state, ...actions, ...mutations };
+  return { ...state, ...actions, ...mutations } as T & U & V;
 };
 
 export * from './types';

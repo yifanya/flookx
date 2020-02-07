@@ -1,5 +1,7 @@
-export interface State<T extends {}> {
-  [stateName: string]: T;
+import * as React from 'react';
+
+export interface State {
+  [propName: string]: any;
 }
 
 export type Action = (...args: any[]) => any;
@@ -7,19 +9,21 @@ export interface Actions {
   [actionName: string]: Action;
 }
 
-export type Mutation<T> = (...args: any[]) => State<T>;
-export interface Mutations<T> {
-  [mutationName: string]: Mutation<T>;
+export type Mutation = (...args: any[]) => void;
+export interface Mutations {
+  [mutationName: string]: Mutation;
 }
 
-export type Setter<S> = (prevState: S) => S;
+export type Setter = (setState: React.Dispatch<any>) => void;
+export interface Model {
+  state: State;
+  mutations: Mutations;
+  actions: Actions;
+  setters: Setter[];
+}
 
-export type Model<T> = {
-  state: State<T>;
-  actions: { [propName: string]: () => void };
-  setters: Setter<T>[];
-  mutations: { [propName: string]: () => void };
-};
-export interface Models {
-  [modelName: string]: Model<any>;
+export interface Store {
+  state: State;
+  mutations: (state: State) => Mutations;
+  actions: (model: (name?: string) => any) => Actions;
 }

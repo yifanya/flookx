@@ -24,6 +24,7 @@ module.exports = {
       "mjs": "never"
     }],
     "no-console": "off",
+    "@typescript-eslint/no-explicit-any": "off",
     "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/*.test.js", "**/*.spec.js", "**/*.spec.ts", "**/*.test.ts", "**/*.config.js"]}]
   },
   env: {
